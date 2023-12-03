@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "5c86e297-5515-4ac0-a29f-3b9bc788f62b"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.kchakri.rideshareapp"
+    }
+  }
+}
