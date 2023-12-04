@@ -4,10 +4,10 @@ import { View, Text, StyleSheet } from "react-native";
 import { SPLASH_TIMEOUT } from "constants/timeouts";
 import { PAGE_NAMES } from "constants/pages";
 
-const SplashPage = ({ navigation }) => {
+const Splash = ({ navigation }) => {
   useEffect(() => {
     const splashTimer = setTimeout(() => {
-      navigation.replace(PAGE_NAMES.HOME);
+      navigation.replace(PAGE_NAMES.ACTIVITY);
     }, SPLASH_TIMEOUT);
 
     return () => clearTimeout(splashTimer);
@@ -25,4 +25,4 @@ const styles = StyleSheet.create({
   logo: {},
 });
 
-export default SplashPage;
+export default Splash;

@@ -2,8 +2,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { PAGE_NAMES } from "constants/pages";
-import Home from "screens/Home";
 import Splash from "screens/Splash";
+import Activity from "screens/Activity";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -16,7 +16,11 @@ export default function App() {
           component={Splash}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name={PAGE_NAMES.HOME} component={Home} />
+        <Stack.Screen
+          name={PAGE_NAMES.ACTIVITY}
+          component={Activity}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

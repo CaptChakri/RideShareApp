@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet } from "react-native";
 
-const MainPage = ({ navigation }) => {
+const Home = ({ navigation }) => {
   return (
-    <View style={styles.container}>
+    <View>
       <Text style={styles.title}>Welcome to Our App!</Text>
     </View>
   );
@@ -22,4 +22,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MainPage;
+export default Home;

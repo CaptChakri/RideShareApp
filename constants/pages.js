@@ -1,4 +1,6 @@
 export const PAGE_NAMES = {
-  SPLASH: "Splash",
+  ACTIVITY: "Activity",
   HOME: "Home",
+  SETTINGS: "Settings",
+  SPLASH: "Splash",
 };
