@@ -13,7 +13,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
-    "babel-plugin-module-resolver": "^5.0.2"
+    "babel-plugin-module-resolver": "^5.0.2",
+    "typescript": "^5.9.2",
+    "@types/react": "^19.1.12"
   },
   "scripts": {
     "start": "expo start",
@@ -22,7 +24,8 @@
     "web": "expo start --web",
     "build": "expo export",
     "release": "npm install && npm run start",
-    "test": "npm run build"
+    "test": "npm run build",
+    "typecheck": "tsc --noEmit"
   },
   "version": "1.0.0",
   "private": true,

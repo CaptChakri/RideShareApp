@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import Menubar from "components/Menubar";
+import Menubar from "../../components/Menubar";
 
-const Activity = ({ navigation }) => {
+const Activity = () => {
   return (
     <View style={styles.container}>
       <Menubar />
