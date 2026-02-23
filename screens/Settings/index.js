@@ -1,10 +1,13 @@
+import { ScrollView } from "react-native";
 import { View, Text, StyleSheet } from "react-native";
 
 const Settings = () => {
   return (
-    <View>
-      <Text>Settings</Text>
-    </View>
+    <ScrollView>
+      <Block>
+        <Text>Username</Text>
+      </Block>
+    </ScrollView>
   );
 };
 
