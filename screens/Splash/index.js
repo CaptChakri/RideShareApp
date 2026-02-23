@@ -7,7 +7,7 @@ import { PAGE_NAMES } from "constants/pages";
 const Splash = ({ navigation }) => {
   useEffect(() => {
     const splashTimer = setTimeout(() => {
-      navigation.replace(PAGE_NAMES.ACTIVITY);
+      navigation.replace(PAGE_NAMES.LOGIN);
     }, SPLASH_TIMEOUT);
 
     return () => clearTimeout(splashTimer);
