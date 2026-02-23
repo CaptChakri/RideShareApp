@@ -20,7 +20,9 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build": "CI=1 EXPO_OFFLINE=1 expo export:web",
+    "test": "npm run build"
   },
   "version": "1.0.0",
   "private": true,
