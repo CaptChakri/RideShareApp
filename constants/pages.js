@@ -3,4 +3,5 @@ export const PAGE_NAMES = {
   HOME: "Home",
   SETTINGS: "Settings",
   SPLASH: "Splash",
+  LOGIN: "Login",
 };
