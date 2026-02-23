@@ -3,24 +3,25 @@
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/stack": "^6.3.20",
-    "eas": "^0.1.0",
-    "expo": "^54.0.0",
+    "expo": "^54.0.33",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-native": "0.81.4",
-    "react-native-maps": "1.7.1",
+    "react-native": "0.81.5",
+    "react-native-maps": "1.20.1",
     "react-native-vector-icons": "^10.0.2",
     "react-native-web": "~0.21.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.19.3"
+    "@babel/core": "^7.24.0",
+    "babel-plugin-module-resolver": "^5.0.2"
   },
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "CI=1 EXPO_OFFLINE=1 expo export:web",
+    "build": "expo export",
+    "release": "npm install && npm run start",
     "test": "npm run build"
   },
   "version": "1.0.0",
