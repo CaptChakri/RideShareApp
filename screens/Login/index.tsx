@@ -1,17 +1,21 @@
+import type { StackScreenProps } from "@react-navigation/stack";
 import { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Pressable,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
-import { PAGE_NAMES } from "constants/pages";
+import { PAGE_NAMES } from "../../constants/pages";
+import type { RootStackParamList } from "../../types/navigation";
 
-const Login = ({ navigation }) => {
+type LoginProps = StackScreenProps<RootStackParamList, "Login">;
+
+const Login = ({ navigation }: LoginProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 

@@ -1,0 +1,81 @@
+name: Startup Validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate-app-startup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate startup build
+        run: npm run build
+
+      - name: Validate Expo web startup and HTTP reachability
+        run: |
+          PORT=$(python - <<'PY'
+          import socket
+          with socket.socket() as s:
+              s.bind(("", 0))
+              print(s.getsockname()[1])
+          PY
+          )
+          echo "Using port ${PORT} for Expo startup validation"
+
+          CI=1 EXPO_OFFLINE=1 npx expo start --web --offline --port "$PORT" > expo-start.log 2>&1 &
+          EXPO_PID=$!
+
+          cleanup() {
+            kill "$EXPO_PID" 2>/dev/null || true
+            wait "$EXPO_PID" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          STARTUP_PATTERN="Waiting on http://localhost:${PORT}|web compiled successfully"
+
+          for i in {1..90}; do
+            if grep -Eq "$STARTUP_PATTERN" expo-start.log; then
+              echo "Expo startup signal detected"
+              break
+            fi
+
+            if ! kill -0 "$EXPO_PID" 2>/dev/null; then
+              echo "Expo exited before startup validation completed"
+              cat expo-start.log
+              exit 1
+            fi
+
+            sleep 2
+          done
+
+          if ! grep -Eq "$STARTUP_PATTERN" expo-start.log; then
+            echo "Timed out waiting for Expo startup"
+            cat expo-start.log
+            exit 1
+          fi
+
+          for i in {1..45}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${PORT}" || true)
+            if [ "$STATUS" = "200" ]; then
+              echo "Expo web app is reachable (HTTP 200)"
+              exit 0
+            fi
+            sleep 1
+          done
+
+          echo "Expo startup signal was detected, but app was not reachable with HTTP 200"
+          cat expo-start.log
+          exit 1
