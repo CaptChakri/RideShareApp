@@ -55,5 +55,5 @@ npm test
 A GitHub Actions workflow now validates that the app can start without build failures by running the production build on every pull request and on pushes to `main`:
 
 - Workflow: `.github/workflows/startup-validation.yml`
-- Validation steps: `npm run build`, an Expo web startup smoke check (`expo start --web --offline`), and an HTTP reachability check that expects `200` from `http://localhost:8088`.
+- Validation steps: `npm run build`, an Expo web startup smoke check (`expo start --web --offline`), and an HTTP reachability check that expects `200` from the dynamically selected local Expo URL.
 

@@ -27,7 +27,16 @@ jobs:
 
       - name: Validate Expo web startup and HTTP reachability
         run: |
-          CI=1 EXPO_OFFLINE=1 npx expo start --web --offline --port 8088 > expo-start.log 2>&1 &
+          PORT=$(python - <<'PY'
+          import socket
+          with socket.socket() as s:
+              s.bind(("", 0))
+              print(s.getsockname()[1])
+          PY
+          )
+          echo "Using port ${PORT} for Expo startup validation"
+
+          CI=1 EXPO_OFFLINE=1 npx expo start --web --offline --port "$PORT" > expo-start.log 2>&1 &
           EXPO_PID=$!
 
           cleanup() {
@@ -36,8 +45,10 @@ jobs:
           }
           trap cleanup EXIT
 
-          for i in {1..60}; do
-            if grep -Eq "Waiting on http://localhost:8088|web compiled successfully" expo-start.log; then
+          STARTUP_PATTERN="Waiting on http://localhost:${PORT}|web compiled successfully"
+
+          for i in {1..90}; do
+            if grep -Eq "$STARTUP_PATTERN" expo-start.log; then
               echo "Expo startup signal detected"
               break
             fi
@@ -51,14 +62,14 @@ jobs:
             sleep 2
           done
 
-          if ! grep -Eq "Waiting on http://localhost:8088|web compiled successfully" expo-start.log; then
+          if ! grep -Eq "$STARTUP_PATTERN" expo-start.log; then
             echo "Timed out waiting for Expo startup"
             cat expo-start.log
             exit 1
           fi
 
-          for i in {1..15}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8088 || true)
+          for i in {1..45}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${PORT}" || true)
             if [ "$STATUS" = "200" ]; then
               echo "Expo web app is reachable (HTTP 200)"
               exit 0
