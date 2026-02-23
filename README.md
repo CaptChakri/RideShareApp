@@ -49,3 +49,11 @@ npm test
 - `npm run web` - start Expo web dev server
 - `npm run build` - export production web bundle (`expo export:web`)
 - `npm test` - run the build validation
+
+## CI startup validation integration
+
+A GitHub Actions workflow now validates that the app can start without build failures by running the production build on every pull request and on pushes to `main`:
+
+- Workflow: `.github/workflows/startup-validation.yml`
+- Validation steps: `npm run build`, an Expo web startup smoke check (`expo start --web --offline`), and an HTTP reachability check that expects `200` from `http://localhost:8088`.
+

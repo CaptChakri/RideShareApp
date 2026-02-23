@@ -24,7 +24,7 @@ const Menubar = () => {
               return null;
           }
         },
-        tabBarLabel: "",
+        tabBarShowLabel: false,
         tabBarStyle: styles.MenubarContainer,
       })}
     >
