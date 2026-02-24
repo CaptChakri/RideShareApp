@@ -28,11 +28,11 @@ jobs:
         run: |
           find_free_port() {
             python - <<'PY'
-import socket
-with socket.socket() as s:
-    s.bind(("", 0))
-    print(s.getsockname()[1])
-PY
+            import socket
+            with socket.socket() as s:
+                s.bind(("", 0))
+                print(s.getsockname()[1])
+            PY
           }
 
           wait_for_startup() {
