@@ -1,7 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { useColorScheme } from "react-native";
 
 import { PAGE_NAMES } from "../../constants/pages";
+import { appColors } from "../../constants/theme";
 import HomeScreen from "../../screens/Home";
 import SettingsScreen from "../../screens/Settings";
 import type { BottomTabParamList } from "../../types/navigation";
@@ -9,6 +11,9 @@ import type { BottomTabParamList } from "../../types/navigation";
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
 const Menubar = () => {
+  const isDarkMode = useColorScheme() === "dark";
+  const palette = isDarkMode ? appColors.dark : appColors.light;
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -26,6 +31,16 @@ const Menubar = () => {
               return null;
           }
         },
+        tabBarActiveTintColor: palette.buttonPrimary,
+        tabBarInactiveTintColor: palette.textSecondary,
+        tabBarStyle: {
+          backgroundColor: palette.surface,
+          borderTopColor: palette.inputBorder,
+        },
+        headerStyle: {
+          backgroundColor: palette.surface,
+        },
+        headerTintColor: palette.textPrimary,
         tabBarShowLabel: false,
       })}
     >
