@@ -39,7 +39,7 @@ Run the test command:
 npm test
 ```
 
-> `npm test` currently runs the same validation as `npm run build` by exporting the web bundle with Expo.
+> `npm test` currently runs the same validation as `npm run build` by exporting the bundle with Expo.
 
 ## Available scripts
 
@@ -47,7 +47,7 @@ npm test
 - `npm run android` - open Android target
 - `npm run ios` - open iOS target
 - `npm run web` - start Expo web dev server
-- `npm run build` - export production web bundle (`expo export:web`)
+- `npm run build` - export production bundle (`expo export`)
 - `npm test` - run the build validation
 
 ## CI startup validation integration
@@ -55,5 +55,5 @@ npm test
 A GitHub Actions workflow now validates that the app can start without build failures by running the production build on every pull request and on pushes to `main`:
 
 - Workflow: `.github/workflows/startup-validation.yml`
-- Validation steps: `npm run build`, an Expo web startup smoke check (`expo start --web --offline`), and an HTTP reachability check that expects `200` from the dynamically selected local Expo URL.
+- Validation steps: `npm run build`, an Expo startup smoke check (`expo start --offline`), and HTTP `curl` checks that expect `200` from all three runtime targets: web (`/`), iOS bundle (`/index.bundle?platform=ios...`), and Android bundle (`/index.bundle?platform=android...`).
 

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 
 import { PAGE_NAMES } from "../../constants/pages";
+import { persistGoogleAuthSession } from "../../utils/authSession";
 import type { RootStackParamList } from "../../types/navigation";
 
 type LoginProps = StackScreenProps<RootStackParamList, "Login">;
@@ -20,6 +21,16 @@ const Login = ({ navigation }: LoginProps) => {
   const [password, setPassword] = useState("");
 
   const onLogin = () => {
+    navigation.replace(PAGE_NAMES.ACTIVITY);
+  };
+
+  const onGoogleSignIn = () => {
+    persistGoogleAuthSession();
+    navigation.replace(PAGE_NAMES.ACTIVITY);
+  };
+
+  const onGoogleSignUp = () => {
+    persistGoogleAuthSession();
     navigation.replace(PAGE_NAMES.ACTIVITY);
   };
 
@@ -51,6 +62,15 @@ const Login = ({ navigation }: LoginProps) => {
         <Pressable onPress={onLogin} style={styles.loginButton}>
           <Text style={styles.loginButtonText}>Log In</Text>
         </Pressable>
+
+        <View style={styles.googleActions}>
+          <Pressable onPress={onGoogleSignIn} style={styles.googleButton}>
+            <Text style={styles.googleButtonText}>Sign in with Google</Text>
+          </Pressable>
+          <Pressable onPress={onGoogleSignUp} style={styles.googleButton}>
+            <Text style={styles.googleButtonText}>Sign up with Google</Text>
+          </Pressable>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -110,6 +130,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#FFF",
+  },
+  googleActions: {
+    marginTop: 16,
+    gap: 10,
+  },
+  googleButton: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#CED5E3",
+    alignItems: "center",
+    paddingVertical: 12,
+    backgroundColor: "#FFF",
+  },
+  googleButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#1E293B",
   },
 });
 

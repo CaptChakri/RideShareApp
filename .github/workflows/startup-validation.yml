@@ -24,58 +24,96 @@ jobs:
       - name: Validate startup build
         run: npm run build
 
-      - name: Validate Expo web startup and HTTP reachability
+      - name: Validate Expo web, iOS, and Android bundle endpoints via curl
         run: |
-          PORT=$(python - <<'PY'
-          import socket
-          with socket.socket() as s:
-              s.bind(("", 0))
-              print(s.getsockname()[1])
-          PY
-          )
-          echo "Using port ${PORT} for Expo startup validation"
-
-          CI=1 EXPO_OFFLINE=1 npx expo start --web --offline --port "$PORT" > expo-start.log 2>&1 &
-          EXPO_PID=$!
-
-          cleanup() {
-            kill "$EXPO_PID" 2>/dev/null || true
-            wait "$EXPO_PID" 2>/dev/null || true
+          find_free_port() {
+            python - <<'PY'
+import socket
+with socket.socket() as s:
+    s.bind(("", 0))
+    print(s.getsockname()[1])
+PY
           }
-          trap cleanup EXIT
 
-          STARTUP_PATTERN="Waiting on http://localhost:${PORT}|web compiled successfully"
+          wait_for_startup() {
+            local pid="$1"
+            local log_file="$2"
+            local startup_pattern="$3"
 
-          for i in {1..90}; do
-            if grep -Eq "$STARTUP_PATTERN" expo-start.log; then
-              echo "Expo startup signal detected"
-              break
-            fi
+            for i in {1..90}; do
+              if grep -Eq "$startup_pattern" "$log_file"; then
+                echo "Startup signal detected: $startup_pattern"
+                return 0
+              fi
 
-            if ! kill -0 "$EXPO_PID" 2>/dev/null; then
-              echo "Expo exited before startup validation completed"
-              cat expo-start.log
-              exit 1
-            fi
+              if ! kill -0 "$pid" 2>/dev/null; then
+                echo "Expo exited before startup validation completed"
+                cat "$log_file"
+                return 1
+              fi
 
-            sleep 2
-          done
+              sleep 2
+            done
 
-          if ! grep -Eq "$STARTUP_PATTERN" expo-start.log; then
-            echo "Timed out waiting for Expo startup"
-            cat expo-start.log
-            exit 1
-          fi
+            echo "Timed out waiting for startup signal"
+            cat "$log_file"
+            return 1
+          }
 
-          for i in {1..45}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${PORT}" || true)
-            if [ "$STATUS" = "200" ]; then
-              echo "Expo web app is reachable (HTTP 200)"
-              exit 0
-            fi
-            sleep 1
-          done
+          wait_for_http_200() {
+            local url="$1"
+            local label="$2"
 
-          echo "Expo startup signal was detected, but app was not reachable with HTTP 200"
-          cat expo-start.log
-          exit 1
+            for i in {1..45}; do
+              status=$(curl -s -o /dev/null -w "%{http_code}" "$url" || true)
+              if [ "$status" = "200" ]; then
+                echo "$label is reachable (HTTP 200)"
+                return 0
+              fi
+              sleep 1
+            done
+
+            echo "$label was not reachable with HTTP 200"
+            echo "Checked URL: $url"
+            return 1
+          }
+
+          NATIVE_PORT=$(find_free_port)
+          echo "Using native validation port ${NATIVE_PORT}"
+
+          CI=1 EXPO_OFFLINE=1 npx expo start --offline --port "$NATIVE_PORT" > expo-native.log 2>&1 &
+          NATIVE_PID=$!
+
+          cleanup_native() {
+            kill "$NATIVE_PID" 2>/dev/null || true
+            wait "$NATIVE_PID" 2>/dev/null || true
+          }
+          trap cleanup_native EXIT
+
+          wait_for_startup "$NATIVE_PID" "expo-native.log" "Waiting on http://localhost:${NATIVE_PORT}"
+
+          IOS_BUNDLE_URL="http://127.0.0.1:${NATIVE_PORT}/index.bundle?platform=ios&dev=true&minify=false"
+          ANDROID_BUNDLE_URL="http://127.0.0.1:${NATIVE_PORT}/index.bundle?platform=android&dev=true&minify=false"
+
+          wait_for_http_200 "$IOS_BUNDLE_URL" "Metro iOS bundle endpoint"
+          wait_for_http_200 "$ANDROID_BUNDLE_URL" "Metro Android bundle endpoint"
+
+          cleanup_native
+          trap - EXIT
+
+          WEB_PORT=$(find_free_port)
+          echo "Using web validation port ${WEB_PORT}"
+
+          CI=1 EXPO_OFFLINE=1 npx expo start --web --offline --port "$WEB_PORT" > expo-web.log 2>&1 &
+          WEB_PID=$!
+
+          cleanup_web() {
+            kill "$WEB_PID" 2>/dev/null || true
+            wait "$WEB_PID" 2>/dev/null || true
+          }
+          trap cleanup_web EXIT
+
+          wait_for_startup "$WEB_PID" "expo-web.log" "Waiting on http://localhost:${WEB_PORT}|web compiled successfully"
+
+          WEB_URL="http://127.0.0.1:${WEB_PORT}"
+          wait_for_http_200 "$WEB_URL" "Expo web endpoint"

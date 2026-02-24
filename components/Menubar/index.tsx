@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import IonIcon from "react-native-vector-icons/Ionicons";
+import { Ionicons } from "@expo/vector-icons";
 
 import { PAGE_NAMES } from "../../constants/pages";
 import HomeScreen from "../../screens/Home";
@@ -16,11 +16,11 @@ const Menubar = () => {
           switch (route.name) {
             case PAGE_NAMES.HOME: {
               const homeIcon = focused ? "home" : "home-outline";
-              return <IonIcon color={color} name={homeIcon} size={size} />;
+              return <Ionicons color={color} name={homeIcon} size={size} />;
             }
             case PAGE_NAMES.SETTINGS: {
               const settingsIcon = focused ? "settings" : "settings-outline";
-              return <IonIcon color={color} name={settingsIcon} size={size} />;
+              return <Ionicons color={color} name={settingsIcon} size={size} />;
             }
             default:
               return null;

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
 import { PAGE_NAMES } from "../../constants/pages";
+import { hasGoogleAuthSession } from "../../utils/authSession";
 import { SPLASH_TIMEOUT_MS } from "../../constants/timeouts";
 import type { RootStackParamList } from "../../types/navigation";
 
@@ -11,7 +12,8 @@ type SplashProps = StackScreenProps<RootStackParamList, "Splash">;
 const Splash = ({ navigation }: SplashProps) => {
   useEffect(() => {
     const splashTimer = setTimeout(() => {
-      navigation.replace(PAGE_NAMES.LOGIN);
+      const nextPage = hasGoogleAuthSession() ? PAGE_NAMES.ACTIVITY : PAGE_NAMES.LOGIN;
+      navigation.replace(nextPage);
     }, SPLASH_TIMEOUT_MS);
 
     return () => clearTimeout(splashTimer);
