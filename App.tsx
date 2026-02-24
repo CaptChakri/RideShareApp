@@ -1,7 +1,9 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useColorScheme } from "react-native";
 
 import { PAGE_NAMES } from "./constants/pages";
+import { getNavigationTheme } from "./constants/theme";
 import Activity from "./screens/Activity";
 import Login from "./screens/Login";
 import Splash from "./screens/Splash";
@@ -10,9 +12,11 @@ import type { RootStackParamList } from "./types/navigation";
 const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const isDarkMode = useColorScheme() === "dark";
+
   return (
     // @ts-ignore react type declarations are provided by runtime in this project setup
-    <NavigationContainer>
+    <NavigationContainer theme={getNavigationTheme(isDarkMode)}>
       <Stack.Navigator initialRouteName={PAGE_NAMES.SPLASH}>
         <Stack.Screen
           name={PAGE_NAMES.SPLASH}
