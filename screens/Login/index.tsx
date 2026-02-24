@@ -7,16 +7,22 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useColorScheme,
   View,
 } from "react-native";
 
 import { PAGE_NAMES } from "../../constants/pages";
-import { persistGoogleAuthSession } from "../../utils/authSession";
+import { appColors } from "../../constants/theme";
 import type { RootStackParamList } from "../../types/navigation";
+import { persistGoogleAuthSession } from "../../utils/authSession";
 
 type LoginProps = StackScreenProps<RootStackParamList, "Login">;
 
 const Login = ({ navigation }: LoginProps) => {
+  const isDarkMode = useColorScheme() === "dark";
+  const palette = isDarkMode ? appColors.dark : appColors.light;
+  const styles = createStyles(isDarkMode);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -47,14 +53,14 @@ const Login = ({ navigation }: LoginProps) => {
           keyboardType="email-address"
           onChangeText={setEmail}
           placeholder="Email"
-          placeholderTextColor="#888"
+          placeholderTextColor={palette.placeholder}
           style={styles.input}
           value={email}
         />
         <TextInput
           onChangeText={setPassword}
           placeholder="Password"
-          placeholderTextColor="#888"
+          placeholderTextColor={palette.placeholder}
           secureTextEntry
           style={styles.input}
           value={password}
@@ -76,78 +82,82 @@ const Login = ({ navigation }: LoginProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: "#F5F7FB",
-  },
-  formCard: {
-    width: "100%",
-    maxWidth: 380,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#111",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 24,
-  },
-  input: {
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "#D9DFEA",
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    marginBottom: 14,
-    fontSize: 16,
-    color: "#111",
-    backgroundColor: "#FFF",
-  },
-  loginButton: {
-    marginTop: 6,
-    borderRadius: 10,
-    backgroundColor: "#2979FF",
-    alignItems: "center",
-    paddingVertical: 14,
-  },
-  loginButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#FFF",
-  },
-  googleActions: {
-    marginTop: 16,
-    gap: 10,
-  },
-  googleButton: {
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#CED5E3",
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#FFF",
-  },
-  googleButtonText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#1E293B",
-  },
-});
+const createStyles = (isDarkMode: boolean) => {
+  const palette = isDarkMode ? appColors.dark : appColors.light;
+
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+      backgroundColor: palette.background,
+    },
+    formCard: {
+      width: "100%",
+      maxWidth: 380,
+      backgroundColor: palette.surface,
+      borderRadius: 16,
+      padding: 24,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.12,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: "700",
+      color: palette.textPrimary,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: palette.textSecondary,
+      marginBottom: 24,
+    },
+    input: {
+      width: "100%",
+      borderWidth: 1,
+      borderColor: palette.inputBorder,
+      borderRadius: 10,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      marginBottom: 14,
+      fontSize: 16,
+      color: palette.textPrimary,
+      backgroundColor: palette.surface,
+    },
+    loginButton: {
+      marginTop: 6,
+      borderRadius: 10,
+      backgroundColor: palette.buttonPrimary,
+      alignItems: "center",
+      paddingVertical: 14,
+    },
+    loginButtonText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: "#FFF",
+    },
+    googleActions: {
+      marginTop: 16,
+      gap: 10,
+    },
+    googleButton: {
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: palette.buttonSecondaryBorder,
+      alignItems: "center",
+      paddingVertical: 12,
+      backgroundColor: palette.surface,
+    },
+    googleButtonText: {
+      fontSize: 15,
+      fontWeight: "600",
+      color: palette.buttonSecondaryText,
+    },
+  });
+};
 
 export default Login;
